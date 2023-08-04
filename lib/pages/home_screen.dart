@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:lenfit/pages/lens_page.dart';
+import 'package:lenfit/widgets/use_camera.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:lenfit/pages/main_page.dart';
-import 'package:lenfit/pages/search_page.dart';
-import 'package:lenfit/pages/user_page.dart';
-import 'package:lenfit/pages/workout_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -12,55 +12,83 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _selectedIndex = 0;
-  static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  static const List<Widget> _widgetOptions = <Widget>[
-    MainPage(),
-    WorkoutPage(),
-    SearchPage(),
-    UserPage(),
-  ];
+  List<Widget> _buildScreens() {
+    return [
+      const MainPage(),
+      const LensPage(),
+      const UseCamera(),
+      // const UserPage(),
+    ];
+  }
+
+  List<PersistentBottomNavBarItem> _navBarsItems() {
+    return [
+      PersistentBottomNavBarItem(
+        icon: const Icon(Icons.home),
+        title: ("Home"),
+        activeColorPrimary: Theme.of(context).primaryColor,
+        inactiveColorPrimary: Colors.grey,
+      ),
+      PersistentBottomNavBarItem(
+        icon: const Icon(
+          Icons.remove_red_eye_rounded,
+          color: Colors.white,
+          size: 40,
+        ),
+        title: ("Lens"),
+        activeColorPrimary: Theme.of(context).primaryColor,
+        inactiveColorPrimary: Colors.grey,
+      ),
+      PersistentBottomNavBarItem(
+        icon: const Icon(Icons.settings),
+        title: ("Settings"),
+        activeColorPrimary: Theme.of(context).primaryColor,
+        inactiveColorPrimary: Colors.grey,
+      ),
+    ];
+  }
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    setState(() {});
   }
+
+  final PersistentTabController _controller =
+      PersistentTabController(initialIndex: 0);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
+    return PersistentTabView(
+      context,
+      controller: _controller,
+      screens: _buildScreens(),
+      items: _navBarsItems(),
+      confineInSafeArea: true,
+      backgroundColor: Colors.white, // Default is Colors.white.
+      handleAndroidBackButtonPress: true, // Default is true.
+      resizeToAvoidBottomInset:
+          true, // This needs to be true if you want to move up the screen when keyboard appears. Default is true.
+      stateManagement: true, // Default is true.
+      hideNavigationBarWhenKeyboardShows:
+          true, // Recommended to set 'resizeToAvoidBottomInset' as true while using this argument. Default is true.
+      decoration: NavBarDecoration(
+        borderRadius: BorderRadius.circular(10.0),
+        colorBehindNavBar: Colors.white,
       ),
-      backgroundColor: Colors.white,
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        showUnselectedLabels: false,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-            backgroundColor: Colors.amber,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.fitness_center_rounded),
-            label: 'Fitness',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search_rounded),
-            label: 'Search',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.indigoAccent,
-        onTap: _onItemTapped,
+      popAllScreensOnTapOfSelectedTab: true,
+      popActionScreens: PopActionScreensType.all,
+      itemAnimationProperties: const ItemAnimationProperties(
+        // Navigation Bar's items animation properties.
+        duration: Duration(milliseconds: 200),
+        curve: Curves.ease,
       ),
+      screenTransitionAnimation: const ScreenTransitionAnimation(
+        // Screen transition animation on change of selected tab.
+        animateTabTransition: true,
+        curve: Curves.ease,
+        duration: Duration(milliseconds: 200),
+      ),
+      navBarStyle:
+          NavBarStyle.style15, // Choose the nav bar style with this property.
     );
   }
 }
