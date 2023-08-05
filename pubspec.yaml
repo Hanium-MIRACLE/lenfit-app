@@ -30,6 +30,7 @@ environment:
 dependencies:
     flutter:
         sdk: flutter
+    ionicons: ^0.2.2
     flutter_login: ^4.1.1
     google_sign_in: ^6.1.4
     image_picker: ^1.0.0
@@ -69,7 +70,26 @@ flutter:
         - assets/images/dumbell.png
         - assets/images/kettlebell.png
         - assets/images/bottle.png
+        - assets/images/google.png
 
+    fonts:
+        - family: Azonix
+          fonts:
+              - asset: assets/fonts/Azonix.otf
+        - family: GeneralSans
+          fonts:
+              - asset: assets/fonts/GeneralSans-Bold.otf
+                weight: 700
+              - asset: assets/fonts/GeneralSans-Semibold.otf
+                weight: 600
+              - asset: assets/fonts/GeneralSans-Regular.otf
+                weight: 400
+              - asset: assets/fonts/GeneralSans-Light.otf
+                weight: 200
+              - asset: assets/fonts/GeneralSans-Extralight.otf
+                weight: 100
+              - asset: assets/fonts/GeneralSans-Italic.otf
+                style: italic
     # An image asset can refer to one or more resolution-specific "variants", see
     # https://flutter.dev/assets-and-images/#resolution-aware
 
