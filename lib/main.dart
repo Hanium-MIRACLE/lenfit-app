@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lenfit/pages/home_screen.dart';
-import 'package:lenfit/pages/login_screen.dart';
+import 'package:lenfit/screens/login_screen/login_screen.dart';
 import 'package:lenfit/utils/colors.dart';
 
 void main() => runApp(const LenFitApp());
