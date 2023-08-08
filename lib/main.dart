@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:lenfit/pages/home_screen.dart';
+import 'package:lenfit/screens/navigation.dart';
+import 'package:lenfit/screens/gallery_screen/gallery_screen.dart';
+import 'package:lenfit/screens/lens_screen/lens_screen.dart';
+import 'package:lenfit/screens/login_screen/components/login_content.dart';
 import 'package:lenfit/screens/login_screen/login_screen.dart';
+import 'package:lenfit/screens/record_screen/record_screen.dart';
 import 'package:lenfit/utils/colors.dart';
 
 void main() => runApp(const LenFitApp());
@@ -24,10 +28,14 @@ class LenFitApp extends StatelessWidget {
         primaryColor: const Color(0xFF11009E),
       ),
       // home: const HomeScreen(),
-      initialRoute: '/login',
+      initialRoute: '/sign-in',
       routes: {
-        '/login': (context) => const LoginScreen(),
-        '/': (context) => const HomeScreen(),
+        '/': (context) => const Navigation(),
+        '/gallery': (context) => const GalleryScreen(),
+        '/sign-up': (context) => const LoginScreen(screen: Screens.signUp),
+        '/sign-in': (context) => const LoginScreen(screen: Screens.signIn),
+        '/lens': (context) => const LensScreen(),
+        '/records': (context) => const RecordScreen(),
       },
     );
   }

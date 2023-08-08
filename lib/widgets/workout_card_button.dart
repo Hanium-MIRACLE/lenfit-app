@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lenfit/pages/squat_page.dart';
 
 class WorkoutCardButton extends StatelessWidget {
   final int index;
@@ -30,12 +29,7 @@ class WorkoutCardButton extends StatelessWidget {
             borderRadius: BorderRadius.all(Radius.circular(16)),
           ),
         ),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const SquatPage()),
-          );
-        },
+        onPressed: () {},
         child: Row(
           children: [
             SizedBox(

@@ -1,23 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:lenfit/pages/lens_page.dart';
-import 'package:lenfit/widgets/use_camera.dart';
+import 'package:lenfit/screens/gallery_screen/gallery_screen.dart';
+import 'package:lenfit/screens/lens_screen/lens_screen.dart';
+import 'package:lenfit/screens/user_screen/user_screen.dart';
+import 'package:lenfit/utils/colors.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
-import 'package:lenfit/pages/main_page.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class Navigation extends StatefulWidget {
+  const Navigation({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<Navigation> createState() => _NavigationState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _NavigationState extends State<Navigation> {
+  static const IconData bar_chart =
+      IconData(0xe0cc, fontFamily: 'MaterialIcons');
+
   List<Widget> _buildScreens() {
     return [
-      const MainPage(),
-      const LensPage(),
-      const UseCamera(),
-      // const UserPage(),
+      const GalleryScreen(),
+      const LensScreen(),
+      const LensScreen(),
+      const UserScreen()
     ];
   }
 
@@ -26,23 +30,25 @@ class _HomeScreenState extends State<HomeScreen> {
       PersistentBottomNavBarItem(
         icon: const Icon(Icons.home),
         title: ("Home"),
-        activeColorPrimary: Theme.of(context).primaryColor,
+        activeColorPrimary: cPrimaryColor,
         inactiveColorPrimary: Colors.grey,
       ),
       PersistentBottomNavBarItem(
-        icon: const Icon(
-          Icons.remove_red_eye_rounded,
-          color: Colors.white,
-          size: 40,
-        ),
+        icon: const Icon(Icons.camera_rounded),
         title: ("Lens"),
-        activeColorPrimary: Theme.of(context).primaryColor,
+        activeColorPrimary: cPrimaryColor,
+        inactiveColorPrimary: Colors.grey,
+      ),
+      PersistentBottomNavBarItem(
+        icon: const Icon(bar_chart),
+        title: ("Settings"),
+        activeColorPrimary: cPrimaryColor,
         inactiveColorPrimary: Colors.grey,
       ),
       PersistentBottomNavBarItem(
         icon: const Icon(Icons.settings),
         title: ("Settings"),
-        activeColorPrimary: Theme.of(context).primaryColor,
+        activeColorPrimary: cPrimaryColor,
         inactiveColorPrimary: Colors.grey,
       ),
     ];
@@ -88,7 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
         duration: Duration(milliseconds: 200),
       ),
       navBarStyle:
-          NavBarStyle.style15, // Choose the nav bar style with this property.
+          NavBarStyle.style12, // Choose the nav bar style with this property.
     );
   }
 }
