@@ -2,16 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:lenfit/screens/login_screen/components/login_content.dart';
 
 class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+  final Screens screen;
+  const LoginScreen({super.key, required this.screen});
 
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-    return const Scaffold(
-        body: Stack(
-      children: [
-        LoginContent(),
-      ],
-    ));
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: LoginContent(
+          currentScreen: screen,
+        ),
+      ),
+    );
   }
 }

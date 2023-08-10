@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lenfit/screens/login_screen/animations/change_screen_animation.dart';
-import 'package:lenfit/utils/colors.dart';
 
 import '../login_content.dart';
 
@@ -13,42 +11,48 @@ class BottomText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        if (!ChangeScreenAnimation.isPlaying) {
-          ChangeScreenAnimation.forward();
-          ChangeScreenAnimation.currentScreen =
-              Screens.values[1 - ChangeScreenAnimation.currentScreen.index];
-        }
-      },
-      behavior: HitTestBehavior.opaque,
-      child: Padding(
+    return Padding(
         padding: const EdgeInsets.all(16.0),
-        child: RichText(
-          text: TextSpan(
-            style: const TextStyle(
-              fontSize: 16,
-            ),
-            children: [
-              TextSpan(
-                text: screen == Screens.createAccount
-                    ? 'Already have an account?  '
-                    : 'Don\'t have an account?  ',
-                style: const TextStyle(
-                  color: cPrimaryColor,
-                ),
-              ),
-              TextSpan(
-                text: screen == Screens.createAccount ? 'Log In' : 'Sign Up',
-                style: const TextStyle(
-                  color: cPrimaryColor,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+        child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: screen == Screens.signUp
+                ? [
+                    const Text(
+                      'Already have an account?  ',
+                      style: TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(context, "/sign-in");
+                      },
+                      child: const Text(
+                        'Log In',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ]
+                : [
+                    const Text(
+                      'Don\'t have an account?  ',
+                      style: TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(context, "/sign-up");
+                      },
+                      child: const Text('Sign Up',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          )),
+                    ),
+                  ]));
   }
 }

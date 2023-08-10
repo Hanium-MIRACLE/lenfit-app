@@ -28,8 +28,7 @@ class TopText extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(
-        horizontal: 100,
-        vertical: 200,
+        vertical: 60,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
