@@ -5,6 +5,7 @@ import 'package:lenfit/screens/lens_screen/lens_screen.dart';
 import 'package:lenfit/screens/login_screen/components/login_content.dart';
 import 'package:lenfit/screens/login_screen/login_screen.dart';
 import 'package:lenfit/screens/record_screen/record_screen.dart';
+import 'package:lenfit/screens/setting_screen/setting_screen.dart';
 import 'package:lenfit/utils/colors.dart';
 
 void main() => runApp(const LenFitApp());
@@ -36,6 +37,7 @@ class LenFitApp extends StatelessWidget {
         '/sign-in': (context) => const LoginScreen(screen: Screens.signIn),
         '/lens': (context) => const LensScreen(),
         '/records': (context) => const RecordScreen(),
+        '/setting': (conetxt) => const SettingScreen(),
       },
     );
   }

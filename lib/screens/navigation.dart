@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lenfit/screens/gallery_screen/gallery_screen.dart';
 import 'package:lenfit/screens/lens_screen/lens_screen.dart';
-import 'package:lenfit/screens/user_screen/user_screen.dart';
+import 'package:lenfit/screens/record_screen/record_screen.dart';
+import 'package:lenfit/screens/setting_screen/setting_screen.dart';
 import 'package:lenfit/utils/colors.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
@@ -20,8 +21,8 @@ class _NavigationState extends State<Navigation> {
     return [
       const GalleryScreen(),
       const LensScreen(),
-      const LensScreen(),
-      const UserScreen()
+      const RecordScreen(),
+      const SettingScreen()
     ];
   }
 
