@@ -5,6 +5,7 @@ import 'package:lenfit/utils/colors.dart';
 import 'package:lenfit/screens/login_screen/components/text/bottom_text.dart';
 import 'package:lenfit/screens/login_screen/components/text/top_text.dart';
 import 'package:http/http.dart' as http;
+import 'package:fluttertoast/fluttertoast.dart';
 
 enum Screens {
   signUp,
@@ -28,6 +29,28 @@ class _LoginContentState extends State<LoginContent> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  var _isLoading = false;
+
+  void _onSubmit() {
+    setState(() => _isLoading = true);
+    if (_formKey.currentState!.validate()) {
+      loginApiCall(emailController.text, passwordController.text, context)
+          .then((value) {
+        if (value == "NO USER") {
+          setState(() {
+            _isLoading = false;
+          });
+        } else {
+          Navigator.pushNamed(context, "/");
+          print(value);
+        }
+      });
+    } else {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   void initState() {
@@ -67,6 +90,7 @@ class _LoginContentState extends State<LoginContent> {
           borderRadius: const BorderRadius.all(Radius.circular(30.0)),
         ),
         child: TextFormField(
+          controller: controller,
           obscureText: inputType == TextInputType.text ? true : false,
           keyboardType: TextInputType.text,
           style: TextStyle(color: Colors.black87),
@@ -105,7 +129,8 @@ class _LoginContentState extends State<LoginContent> {
     );
   }
 
-  Future<String> loginApiCall(String email, String password) async {
+  Future<String> loginApiCall(
+      String email, String password, BuildContext context) async {
     try {
       http.Response response = await http.post(
           Uri.parse("https://api.staging.lenfitapp.com/api/user/token/"),
@@ -115,10 +140,18 @@ class _LoginContentState extends State<LoginContent> {
           });
       if (response.statusCode == 200) {
         dynamic data = json.decode(response.body);
-        Navigator.pushNamed(context, "/");
         return data['token'];
       } else {
-        return 'No user data';
+        Fluttertoast.showToast(
+          msg: "Login Failed",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+        return 'NO USER';
       }
     } catch (error) {
       return error.toString();
@@ -128,17 +161,11 @@ class _LoginContentState extends State<LoginContent> {
   Widget loginButton(String title, BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(
-        horizontal: 135,
+        horizontal: 100,
         vertical: 16,
       ),
-      child: ElevatedButton(
-        onPressed: () {
-          if (_formKey.currentState!.validate()) {
-            loginApiCall(emailController.text, passwordController.text).then(
-              (value) => print(value),
-            );
-          }
-        },
+      child: ElevatedButton.icon(
+        onPressed: _isLoading ? null : _onSubmit,
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 14),
           backgroundColor: cPrimaryColor,
@@ -146,10 +173,21 @@ class _LoginContentState extends State<LoginContent> {
           elevation: 3,
           shadowColor: Colors.black87,
         ),
-        child: Text(
+        icon: _isLoading
+            ? Container(
+                width: 24,
+                height: 24,
+                padding: const EdgeInsets.all(2.0),
+                child: const CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 3,
+                ),
+              )
+            : const Icon(Icons.login),
+        label: Text(
           title,
           style: const TextStyle(
-            fontSize: 18,
+            fontSize: 16,
           ),
         ),
       ),
@@ -266,7 +304,7 @@ class _LoginContentState extends State<LoginContent> {
                           iconData: Icons.lock_outline,
                           inputType: TextInputType.text,
                           controller: passwordController),
-                      loginButton('Sign Up', context),
+                      loginButton("Sign Up", context),
                       orDivider(),
                       googleLoginButton(),
                     ]
@@ -283,7 +321,7 @@ class _LoginContentState extends State<LoginContent> {
                         inputType: TextInputType.text,
                         controller: passwordController,
                       ),
-                      loginButton('Sign In', context),
+                      loginButton("Sign In", context),
                       orDivider(),
                       googleLoginButton(),
                     ],
