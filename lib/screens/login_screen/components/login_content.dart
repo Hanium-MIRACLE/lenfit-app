@@ -53,48 +53,52 @@ class _LoginContentState extends State<LoginContent> {
         horizontal: 36,
         vertical: 8,
       ),
-      child: SizedBox(
-        height: 50,
-        child: Material(
-          elevation: 3,
-          shadowColor: Colors.black87,
-          color: Colors.transparent,
-          borderRadius: BorderRadius.circular(30),
-          child: TextFormField(
-            controller: controller,
-            validator: (value) {
-              if (inputType == TextInputType.emailAddress) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter your email';
-                } else if (!value.contains('@')) {
-                  return 'Please enter your email correctly';
-                }
-              } else if (inputType == TextInputType.name) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter your email';
-                }
-              } else if (inputType == TextInputType.text) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter your password';
-                } else if (value.length < 4) {
-                  return 'Please enter your password correctly';
-                }
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              spreadRadius: 1,
+              blurRadius: 1,
+              offset: Offset(0, 2),
+              color: Colors.grey.shade300,
+            )
+          ],
+          borderRadius: const BorderRadius.all(Radius.circular(30.0)),
+        ),
+        child: TextFormField(
+          obscureText: inputType == TextInputType.text ? true : false,
+          keyboardType: TextInputType.text,
+          style: TextStyle(color: Colors.black87),
+          validator: (value) {
+            if (inputType == TextInputType.emailAddress) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your email';
+              } else if (!value.contains('@')) {
+                return 'Please enter your email correctly';
               }
-              return null;
-            },
-            textAlignVertical: TextAlignVertical.bottom,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30),
-                borderSide: BorderSide.none,
-              ),
-              filled: true,
-              fillColor: Colors.white,
-              hintText: hint,
-              prefixIcon: Icon(iconData),
+            } else if (inputType == TextInputType.name) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your email';
+              }
+            } else if (inputType == TextInputType.text) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your password';
+              } else if (value.length < 4) {
+                return 'Please enter your password correctly';
+              }
+            }
+            return null;
+          },
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(30),
+              borderSide: BorderSide.none,
             ),
-            keyboardType: TextInputType.emailAddress,
-            obscureText: inputType == TextInputType.text ? true : false,
+            hintText: hint,
+            errorStyle: const TextStyle(height: 0),
+            prefixIcon: Icon(iconData),
+            filled: false,
           ),
         ),
       ),
@@ -221,19 +225,6 @@ class _LoginContentState extends State<LoginContent> {
               ),
             ],
           ),
-          // child: TextField(
-          //   textAlignVertical: TextAlignVertical.bottom,
-          //   decoration: InputDecoration(
-          //     border: OutlineInputBorder(
-          //       borderRadius: BorderRadius.circular(30),
-          //       borderSide: BorderSide.none,
-          //     ),
-          //     filled: true,
-          //     fillColor: Colors.white,
-          //     hintText: 'Login with Google',
-          //     // prefixIcon: Icon(iconData),
-          //   ),
-          // ),
         ),
       ),
     );

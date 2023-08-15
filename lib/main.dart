@@ -25,6 +25,7 @@ class LenFitApp extends StatelessWidget {
             ),
         colorScheme: const ColorScheme.light().copyWith(
           background: const Color(0x0011009e),
+          primary: Colors.black,
         ),
         primaryColor: const Color(0xFF11009E),
       ),
