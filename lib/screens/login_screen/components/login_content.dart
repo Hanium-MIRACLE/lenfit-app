@@ -1,11 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:lenfit/main.dart';
+import 'package:lenfit/model/login.dart';
 import 'package:lenfit/utils/colors.dart';
 import 'package:lenfit/screens/login_screen/components/text/bottom_text.dart';
 import 'package:lenfit/screens/login_screen/components/text/top_text.dart';
 import 'package:http/http.dart' as http;
-import 'package:fluttertoast/fluttertoast.dart';
 
 enum Screens {
   signUp,
@@ -30,19 +32,19 @@ class _LoginContentState extends State<LoginContent> {
   final passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   var _isLoading = false;
+  dynamic userInfo;
 
   void _onSubmit() {
     setState(() => _isLoading = true);
     if (_formKey.currentState!.validate()) {
       loginApiCall(emailController.text, passwordController.text, context)
-          .then((value) {
-        if (value == "NO USER") {
+          .then((success) {
+        if (success == false) {
           setState(() {
             _isLoading = false;
           });
         } else {
           Navigator.pushNamed(context, "/");
-          print(value);
         }
       });
     } else {
@@ -55,6 +57,19 @@ class _LoginContentState extends State<LoginContent> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _asyncMethod();
+    });
+  }
+
+  _asyncMethod() async {
+    userInfo = await LenFitApp.storage.read(key: 'login');
+
+    if (userInfo != null) {
+      Navigator.pushNamed(context, '/');
+    } else {
+      print('로그인이 필요합니다');
+    }
   }
 
   @override
@@ -129,7 +144,7 @@ class _LoginContentState extends State<LoginContent> {
     );
   }
 
-  Future<String> loginApiCall(
+  Future<bool> loginApiCall(
       String email, String password, BuildContext context) async {
     try {
       http.Response response = await http.post(
@@ -139,8 +154,17 @@ class _LoginContentState extends State<LoginContent> {
             "password": password,
           });
       if (response.statusCode == 200) {
-        dynamic data = json.decode(response.body);
-        return data['token'];
+        dynamic token = json.decode(response.body)['token'];
+        // final jsonBody = json.decode(response.body['user_id'].toString());
+        // 직렬화를 이용하여 데이터를 입출력하기 위해 model.dart에 Login 정의 참고
+        // var val = jsonEncode(Login('$accountName', '$password', '$jsonBody'));
+        var val = jsonEncode(Login(email, password, token));
+        await LenFitApp.storage.write(
+          key: 'login',
+          value: val,
+        );
+        return true;
+        // return data['token'];
       } else {
         Fluttertoast.showToast(
           msg: "Login Failed",
@@ -151,10 +175,10 @@ class _LoginContentState extends State<LoginContent> {
           textColor: Colors.white,
           fontSize: 16.0,
         );
-        return 'NO USER';
+        return false;
       }
     } catch (error) {
-      return error.toString();
+      return false;
     }
   }
 

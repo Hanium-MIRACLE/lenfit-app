@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:lenfit/screens/navigation.dart';
 import 'package:lenfit/screens/gallery_screen/gallery_screen.dart';
 import 'package:lenfit/screens/lens_screen/lens_screen.dart';
@@ -12,6 +13,7 @@ void main() => runApp(const LenFitApp());
 
 class LenFitApp extends StatelessWidget {
   const LenFitApp({super.key});
+  static const storage = FlutterSecureStorage();
 
   @override
   Widget build(BuildContext context) {
