@@ -8,6 +8,7 @@ import 'package:lenfit/utils/colors.dart';
 import 'package:lenfit/screens/login_screen/components/text/bottom_text.dart';
 import 'package:lenfit/screens/login_screen/components/text/top_text.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
 enum Screens {
   signUp,
@@ -66,6 +67,11 @@ class _LoginContentState extends State<LoginContent> {
     userInfo = await LenFitApp.storage.read(key: 'login');
 
     if (userInfo != null) {
+      print(userInfo);
+      Login loginInfo = Provider.of<Login>(context, listen: false);
+      loginInfo.email = jsonDecode(userInfo)['email'];
+      loginInfo.password = jsonDecode(userInfo)['password'];
+      loginInfo.token = jsonDecode(userInfo)['token'];
       Navigator.pushNamed(context, '/');
     } else {
       print('로그인이 필요합니다');
@@ -146,6 +152,7 @@ class _LoginContentState extends State<LoginContent> {
 
   Future<bool> loginApiCall(
       String email, String password, BuildContext context) async {
+    Login loginInfo = Provider.of<Login>(context);
     try {
       http.Response response = await http.post(
           Uri.parse("https://api.staging.lenfitapp.com/api/user/token/"),
@@ -155,14 +162,14 @@ class _LoginContentState extends State<LoginContent> {
           });
       if (response.statusCode == 200) {
         dynamic token = json.decode(response.body)['token'];
-        // final jsonBody = json.decode(response.body['user_id'].toString());
-        // 직렬화를 이용하여 데이터를 입출력하기 위해 model.dart에 Login 정의 참고
-        // var val = jsonEncode(Login('$accountName', '$password', '$jsonBody'));
-        var val = jsonEncode(Login(email, password, token));
-        await LenFitApp.storage.write(
-          key: 'login',
-          value: val,
-        );
+        // var val = jsonEncode(Login(email, password, token));
+        loginInfo.setEmail(email);
+        loginInfo.setPassword(password);
+        loginInfo.setToken(token);
+        // await LenFitApp.storage.write(
+        //   key: 'login',
+        //   value: val,
+        // );
         return true;
         // return data['token'];
       } else {
