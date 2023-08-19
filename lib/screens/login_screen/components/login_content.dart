@@ -56,9 +56,10 @@ class _LoginContentState extends State<LoginContent> {
 
   @override
   void initState() {
+    print('login_content');
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _asyncMethod();
+      // _asyncMethod();
     });
   }
 
@@ -155,9 +156,6 @@ class _LoginContentState extends State<LoginContent> {
           });
       if (response.statusCode == 200) {
         dynamic token = json.decode(response.body)['token'];
-        // final jsonBody = json.decode(response.body['user_id'].toString());
-        // 직렬화를 이용하여 데이터를 입출력하기 위해 model.dart에 Login 정의 참고
-        // var val = jsonEncode(Login('$accountName', '$password', '$jsonBody'));
         var val = jsonEncode(Login(email, password, token));
         await LenFitApp.storage.write(
           key: 'login',

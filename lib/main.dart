@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:lenfit/screens/navigation.dart';
@@ -11,12 +13,46 @@ import 'package:lenfit/utils/colors.dart';
 
 void main() => runApp(const LenFitApp());
 
-class LenFitApp extends StatelessWidget {
+class LenFitApp extends StatefulWidget {
   const LenFitApp({super.key});
   static const storage = FlutterSecureStorage();
 
   @override
+  State<LenFitApp> createState() => _LenFitAppState();
+}
+
+class _LenFitAppState extends State<LenFitApp> {
+  dynamic user;
+  dynamic userInfo;
+  dynamic token;
+  String? initialRoute;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _asyncMethod();
+    });
+  }
+
+  _asyncMethod() {
+    LenFitApp.storage.read(key: 'login').then((value) {
+      if (value == null) {
+        initialRoute = "/sign-in";
+        setState(() {});
+      } else {
+        user = jsonDecode(value!);
+        token = user['token'];
+        LenFitApp.storage.write(key: 'token', value: token);
+        initialRoute = "/";
+        setState(() {});
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    print(initialRoute);
     return MaterialApp(
       title: 'Main',
       debugShowCheckedModeBanner: false,
@@ -32,7 +68,7 @@ class LenFitApp extends StatelessWidget {
         primaryColor: const Color(0xFF11009E),
       ),
       // home: const HomeScreen(),
-      initialRoute: '/sign-in',
+      initialRoute: initialRoute,
       routes: {
         '/': (context) => const Navigation(),
         '/gallery': (context) => const GalleryScreen(),
