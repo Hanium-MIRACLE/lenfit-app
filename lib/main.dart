@@ -10,8 +10,16 @@ import 'package:lenfit/screens/login_screen/login_screen.dart';
 import 'package:lenfit/screens/record_screen/record_screen.dart';
 import 'package:lenfit/screens/setting_screen/setting_screen.dart';
 import 'package:lenfit/utils/colors.dart';
+import 'package:provider/provider.dart';
 
-void main() => runApp(const LenFitApp());
+import 'model/login.dart';
+
+void main() => runApp(MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => Login()),
+      ],
+      child: const LenFitApp(),
+    ));
 
 class LenFitApp extends StatefulWidget {
   const LenFitApp({super.key});
