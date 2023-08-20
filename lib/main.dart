@@ -77,7 +77,7 @@ class _LenFitAppState extends State<LenFitApp> {
         primaryColor: const Color(0xFF11009E),
       ),
       // home: const HomeScreen(),
-      initialRoute: '/sign-in',
+      initialRoute: '/',
       routes: {
         '/': (context) => const Navigation(),
         '/gallery': (context) => const GalleryScreen(),

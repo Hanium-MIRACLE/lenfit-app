@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:lenfit/model/login.dart';
-import 'package:lenfit/model/workdout_record.dart';
+import 'package:lenfit/model/workout_record.dart';
 import 'package:lenfit/widgets/workout_record_card.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
