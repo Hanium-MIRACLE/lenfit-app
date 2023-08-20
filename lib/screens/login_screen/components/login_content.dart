@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lenfit/main.dart';
 import 'package:lenfit/model/login.dart';
+import 'package:lenfit/model/user.dart';
 import 'package:lenfit/utils/colors.dart';
 import 'package:lenfit/screens/login_screen/components/text/bottom_text.dart';
 import 'package:lenfit/screens/login_screen/components/text/top_text.dart';
@@ -33,7 +34,6 @@ class _LoginContentState extends State<LoginContent> {
   final passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   var _isLoading = false;
-  dynamic userInfo;
 
   void _onSubmit() {
     setState(() => _isLoading = true);
@@ -64,14 +64,14 @@ class _LoginContentState extends State<LoginContent> {
   }
 
   _asyncMethod() async {
-    userInfo = await LenFitApp.storage.read(key: 'login');
+    User userInfo = Provider.of<User>(context, listen: false);
+    // userInfo = await LenFitApp.storage.read(key: 'login');
 
-    if (userInfo != null) {
-      print(userInfo);
-      Login loginInfo = Provider.of<Login>(context, listen: false);
-      loginInfo.email = jsonDecode(userInfo)['email'];
-      loginInfo.password = jsonDecode(userInfo)['password'];
-      loginInfo.token = jsonDecode(userInfo)['token'];
+    if (userInfo.email != null) {
+      // Login loginInfo = Provider.of<Login>(context, listen: false);
+      // loginInfo.email = jsonDecode(userInfo)['email'];
+      // loginInfo.password = jsonDecode(userInfo)['password'];
+      // loginInfo.token = jsonDecode(userInfo)['token'];
       Navigator.pushNamed(context, '/');
     } else {
       print('로그인이 필요합니다');
@@ -152,7 +152,8 @@ class _LoginContentState extends State<LoginContent> {
 
   Future<bool> loginApiCall(
       String email, String password, BuildContext context) async {
-    Login loginInfo = Provider.of<Login>(context);
+    Login loginInfo = Provider.of<Login>(context, listen: false);
+    User userInfo = Provider.of<User>(context, listen: false);
     try {
       http.Response response = await http.post(
           Uri.parse("https://api.staging.lenfitapp.com/api/user/token/"),
@@ -166,12 +167,17 @@ class _LoginContentState extends State<LoginContent> {
         loginInfo.setEmail(email);
         loginInfo.setPassword(password);
         loginInfo.setToken(token);
+        http.Response getUser = await http.get(
+            Uri.parse("https://api.staging.lenfitapp.com/api/user/me/"),
+            headers: {
+              "Authorization": "TOKEN " + token!,
+            });
+        userInfo.fromJson(json.decode(getUser.body));
         // await LenFitApp.storage.write(
         //   key: 'login',
         //   value: val,
         // );
         return true;
-        // return data['token'];
       } else {
         Fluttertoast.showToast(
           msg: "Login Failed",

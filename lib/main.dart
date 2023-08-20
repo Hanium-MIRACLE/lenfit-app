@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:lenfit/model/user.dart';
 import 'package:lenfit/screens/navigation.dart';
 import 'package:lenfit/screens/gallery_screen/gallery_screen.dart';
 import 'package:lenfit/screens/lens_screen/lens_screen.dart';
@@ -17,6 +18,7 @@ import 'model/login.dart';
 void main() => runApp(MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => Login()),
+        ChangeNotifierProvider(create: (_) => User()),
       ],
       child: const LenFitApp(),
     ));
