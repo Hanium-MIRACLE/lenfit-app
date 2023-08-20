@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:lenfit/model/login.dart';
 import 'package:lenfit/model/user.dart';
 import 'package:lenfit/utils/colors.dart';
 import 'package:lenfit/utils/constant.dart';
@@ -100,9 +99,65 @@ class _GalleryScreenState extends State<GalleryScreen> {
     );
   }
 
+  Widget uploadButton() {
+    return Container(
+      width: 80,
+      height: 100,
+      decoration: BoxDecoration(
+        color: cBlack,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: const Icon(
+        Icons.add,
+        color: Colors.white,
+        size: 40,
+      ),
+    );
+  }
+
+  Widget buttonRows({bool includeUploadButton = false}) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        vertical: 16,
+        horizontal: 32,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: includeUploadButton
+            ? [
+                uploadButton(),
+                videoThumbnail(),
+                videoThumbnail(),
+              ]
+            : [
+                videoThumbnail(),
+                videoThumbnail(),
+                videoThumbnail(),
+              ],
+      ),
+    );
+  }
+
+  Widget videoThumbnail() {
+    return InkWell(
+      onTap: () {}, // Handle your callback.
+      splashColor: Colors.white.withOpacity(0.5),
+      child: Ink(
+        height: 100,
+        width: 80,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          image: DecorationImage(
+            image: AssetImage('assets/images/thumbnail_ex.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    Login loginInfo = Provider.of<Login>(context, listen: false);
     User userInfo = Provider.of<User>(context, listen: false);
     return Padding(
       padding: const EdgeInsets.symmetric(
@@ -115,6 +170,12 @@ class _GalleryScreenState extends State<GalleryScreen> {
           children: [
             userInfo.email != null ? topText(userInfo.given_name) : topText(''),
             titleWithDivider(title: 'Recent Videos'),
+            buttonRows(includeUploadButton: true),
+            buttonRows(),
+            buttonRows(),
+            buttonRows(),
+            buttonRows(),
+            buttonRows(),
           ],
         ),
       ),

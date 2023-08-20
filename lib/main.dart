@@ -40,9 +40,9 @@ class _LenFitAppState extends State<LenFitApp> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _asyncMethod();
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   _asyncMethod();
+    // });
   }
 
   _asyncMethod() {
@@ -78,7 +78,7 @@ class _LenFitAppState extends State<LenFitApp> {
         primaryColor: const Color(0xFF11009E),
       ),
       // home: const HomeScreen(),
-      initialRoute: initialRoute,
+      initialRoute: '/sign-in',
       routes: {
         '/': (context) => const Navigation(),
         '/gallery': (context) => const GalleryScreen(),
