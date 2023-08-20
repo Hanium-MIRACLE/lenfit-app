@@ -58,6 +58,21 @@ class _PoseDetectorViewState extends State<PoseDetectorView> {
       _customPaint = CustomPaint(painter: painter);
     } else {
       _text = 'Poses found: ${poses.length}\n\n';
+      if (poses.isNotEmpty) {
+        for (final pose in poses) {
+          for (final landmark in pose.landmarks.values) {
+            Landmarks(
+              name: "${landmark.type}".split('.')[1],
+              landmark: Landmark(
+                x: landmark.x,
+                y: landmark.y,
+                z: landmark.z,
+                v: landmark.likelihood,
+              ),
+            );
+          }
+        }
+      }
       // TODO: set _customPaint to draw landmarks on top of image
       _customPaint = null;
     }
