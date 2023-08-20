@@ -1,10 +1,15 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:lenfit/main.dart';
+import 'package:lenfit/model/login.dart';
+import 'package:lenfit/model/user.dart';
 import 'package:lenfit/utils/colors.dart';
 import 'package:lenfit/screens/login_screen/components/text/bottom_text.dart';
 import 'package:lenfit/screens/login_screen/components/text/top_text.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
 enum Screens {
   signUp,
@@ -28,10 +33,49 @@ class _LoginContentState extends State<LoginContent> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  var _isLoading = false;
+
+  void _onSubmit() {
+    setState(() => _isLoading = true);
+    if (_formKey.currentState!.validate()) {
+      loginApiCall(emailController.text, passwordController.text, context)
+          .then((success) {
+        if (success == false) {
+          setState(() {
+            _isLoading = false;
+          });
+        } else {
+          Navigator.pushNamed(context, "/");
+        }
+      });
+    } else {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _asyncMethod();
+    });
+  }
+
+  _asyncMethod() async {
+    User userInfo = Provider.of<User>(context, listen: false);
+    // userInfo = await LenFitApp.storage.read(key: 'login');
+
+    if (userInfo.email != null) {
+      // Login loginInfo = Provider.of<Login>(context, listen: false);
+      // loginInfo.email = jsonDecode(userInfo)['email'];
+      // loginInfo.password = jsonDecode(userInfo)['password'];
+      // loginInfo.token = jsonDecode(userInfo)['token'];
+      Navigator.pushNamed(context, '/');
+    } else {
+      print('로그인이 필요합니다');
+    }
   }
 
   @override
@@ -53,55 +97,63 @@ class _LoginContentState extends State<LoginContent> {
         horizontal: 36,
         vertical: 8,
       ),
-      child: SizedBox(
-        height: 50,
-        child: Material(
-          elevation: 3,
-          shadowColor: Colors.black87,
-          color: Colors.transparent,
-          borderRadius: BorderRadius.circular(30),
-          child: TextFormField(
-            controller: controller,
-            validator: (value) {
-              if (inputType == TextInputType.emailAddress) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter your email';
-                } else if (!value.contains('@')) {
-                  return 'Please enter your email correctly';
-                }
-              } else if (inputType == TextInputType.name) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter your email';
-                }
-              } else if (inputType == TextInputType.text) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter your password';
-                } else if (value.length < 4) {
-                  return 'Please enter your password correctly';
-                }
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              spreadRadius: 1,
+              blurRadius: 1,
+              offset: Offset(0, 2),
+              color: Colors.grey.shade300,
+            )
+          ],
+          borderRadius: const BorderRadius.all(Radius.circular(30.0)),
+        ),
+        child: TextFormField(
+          controller: controller,
+          obscureText: inputType == TextInputType.text ? true : false,
+          keyboardType: TextInputType.text,
+          style: TextStyle(color: Colors.black87),
+          validator: (value) {
+            if (inputType == TextInputType.emailAddress) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your email';
+              } else if (!value.contains('@')) {
+                return 'Please enter your email correctly';
               }
-              return null;
-            },
-            textAlignVertical: TextAlignVertical.bottom,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30),
-                borderSide: BorderSide.none,
-              ),
-              filled: true,
-              fillColor: Colors.white,
-              hintText: hint,
-              prefixIcon: Icon(iconData),
+            } else if (inputType == TextInputType.name) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your email';
+              }
+            } else if (inputType == TextInputType.text) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your password';
+              } else if (value.length < 4) {
+                return 'Please enter your password correctly';
+              }
+            }
+            return null;
+          },
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(30),
+              borderSide: BorderSide.none,
             ),
-            keyboardType: TextInputType.emailAddress,
-            obscureText: inputType == TextInputType.text ? true : false,
+            hintText: hint,
+            errorStyle: const TextStyle(height: 0),
+            prefixIcon: Icon(iconData),
+            filled: false,
           ),
         ),
       ),
     );
   }
 
-  Future<String> loginApiCall(String email, String password) async {
+  Future<bool> loginApiCall(
+      String email, String password, BuildContext context) async {
+    Login loginInfo = Provider.of<Login>(context, listen: false);
+    User userInfo = Provider.of<User>(context, listen: false);
     try {
       http.Response response = await http.post(
           Uri.parse("https://api.staging.lenfitapp.com/api/user/token/"),
@@ -110,31 +162,47 @@ class _LoginContentState extends State<LoginContent> {
             "password": password,
           });
       if (response.statusCode == 200) {
-        dynamic data = json.decode(response.body);
-        Navigator.pushNamed(context, "/");
-        return data['token'];
+        dynamic token = json.decode(response.body)['token'];
+        // var val = jsonEncode(Login(email, password, token));
+        loginInfo.setEmail(email);
+        loginInfo.setPassword(password);
+        loginInfo.setToken(token);
+        http.Response getUser = await http.get(
+            Uri.parse("https://api.staging.lenfitapp.com/api/user/me/"),
+            headers: {
+              "Authorization": "TOKEN " + token!,
+            });
+        userInfo.fromJson(json.decode(getUser.body));
+        // await LenFitApp.storage.write(
+        //   key: 'login',
+        //   value: val,
+        // );
+        return true;
       } else {
-        return 'No user data';
+        Fluttertoast.showToast(
+          msg: "Login Failed",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+        return false;
       }
     } catch (error) {
-      return error.toString();
+      return false;
     }
   }
 
   Widget loginButton(String title, BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(
-        horizontal: 135,
+        horizontal: 100,
         vertical: 16,
       ),
-      child: ElevatedButton(
-        onPressed: () {
-          if (_formKey.currentState!.validate()) {
-            loginApiCall(emailController.text, passwordController.text).then(
-              (value) => print(value),
-            );
-          }
-        },
+      child: ElevatedButton.icon(
+        onPressed: _isLoading ? null : _onSubmit,
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 14),
           backgroundColor: cPrimaryColor,
@@ -142,10 +210,21 @@ class _LoginContentState extends State<LoginContent> {
           elevation: 3,
           shadowColor: Colors.black87,
         ),
-        child: Text(
+        icon: _isLoading
+            ? Container(
+                width: 24,
+                height: 24,
+                padding: const EdgeInsets.all(2.0),
+                child: const CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 3,
+                ),
+              )
+            : const Icon(Icons.login),
+        label: Text(
           title,
           style: const TextStyle(
-            fontSize: 18,
+            fontSize: 16,
           ),
         ),
       ),
@@ -221,19 +300,6 @@ class _LoginContentState extends State<LoginContent> {
               ),
             ],
           ),
-          // child: TextField(
-          //   textAlignVertical: TextAlignVertical.bottom,
-          //   decoration: InputDecoration(
-          //     border: OutlineInputBorder(
-          //       borderRadius: BorderRadius.circular(30),
-          //       borderSide: BorderSide.none,
-          //     ),
-          //     filled: true,
-          //     fillColor: Colors.white,
-          //     hintText: 'Login with Google',
-          //     // prefixIcon: Icon(iconData),
-          //   ),
-          // ),
         ),
       ),
     );
@@ -275,7 +341,7 @@ class _LoginContentState extends State<LoginContent> {
                           iconData: Icons.lock_outline,
                           inputType: TextInputType.text,
                           controller: passwordController),
-                      loginButton('Sign Up', context),
+                      loginButton("Sign Up", context),
                       orDivider(),
                       googleLoginButton(),
                     ]
@@ -292,7 +358,7 @@ class _LoginContentState extends State<LoginContent> {
                         inputType: TextInputType.text,
                         controller: passwordController,
                       ),
-                      loginButton('Sign In', context),
+                      loginButton("Sign In", context),
                       orDivider(),
                       googleLoginButton(),
                     ],
