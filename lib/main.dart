@@ -62,7 +62,6 @@ class _LenFitAppState extends State<LenFitApp> {
 
   @override
   Widget build(BuildContext context) {
-    print(initialRoute);
     return MaterialApp(
       title: 'Main',
       debugShowCheckedModeBanner: false,
