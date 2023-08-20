@@ -3,10 +3,10 @@ import 'package:lenfit/utils/colors.dart';
 
 class WorkoutRecordCard extends StatelessWidget {
   final String name;
-  final double score;
+  final int score;
   final int time;
   final int count;
-  final int tempo;
+  final int calories;
   final String date;
 
   const WorkoutRecordCard({
@@ -15,7 +15,7 @@ class WorkoutRecordCard extends StatelessWidget {
     required this.score,
     required this.time,
     required this.count,
-    required this.tempo,
+    required this.calories,
     required this.date,
   });
 
@@ -23,9 +23,9 @@ class WorkoutRecordCard extends StatelessWidget {
     return Text(
       title,
       style: const TextStyle(
-        fontFamily: 'Azonix',
-        fontSize: 24,
-        fontWeight: FontWeight.w400,
+        // fontFamily: 'Azonix',
+        fontSize: 32,
+        fontWeight: FontWeight.bold,
         color: Colors.white,
       ),
     );
@@ -39,7 +39,7 @@ class WorkoutRecordCard extends StatelessWidget {
     return "$minute:$second";
   }
 
-  Widget scoreItem(double score) {
+  Widget scoreItem(int score) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.baseline,
       textBaseline: TextBaseline.alphabetic,
@@ -86,7 +86,7 @@ class WorkoutRecordCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: Text(
-        date,
+        date.substring(0, 10),
         style: const TextStyle(
           color: Colors.white,
         ),
@@ -130,7 +130,7 @@ class WorkoutRecordCard extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      item('tempo', '$tempo'),
+                      item('tempo', '$calories'),
                       item('count', '$count'),
                       item('time', secToMin(time)),
                     ],
