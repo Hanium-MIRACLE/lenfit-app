@@ -1,37 +1,29 @@
-class Landmarks {
-  final String? name;
-  final Landmark? landmark;
+import 'dart:convert';
 
-  Landmarks({this.name, this.landmark});
+import 'package:google_mlkit_pose_detection/google_mlkit_pose_detection.dart';
 
-  Landmarks.fromJson(Map<String, dynamic> json)
-      : name = json['name'],
-        landmark = json['landmark'];
+class PoseJson {
+  final Map<int, dynamic>? pose;
 
+  PoseJson({this.pose});
+
+  factory PoseJson.fromJson(Map<String, dynamic> json) {
+    return PoseJson(
+      pose: json['pose'],
+    );
+  }
   Map<String, dynamic> toJson() => {
-        'name': name,
-        'landmark': landmark,
+        'pose': pose,
       };
 }
 
-class Landmark {
-  final double? x;
-  final double? y;
-  final double? z;
-  final double? v;
-
-  Landmark({this.x, this.y, this.z, this.v});
-
-  Landmark.fromJson(Map<String, dynamic> json)
-      : x = json['x'],
-        y = json['y'],
-        z = json['z'],
-        v = json['v'];
-
-  Map<String, dynamic> toJson() => {
-        'x': x,
-        'y': y,
-        'z': z,
-        'v': v,
-      };
+String convertPoseLandmarkToJson(PoseLandmark landmark) {
+  /// Convert PoseLandmark to JSON String
+  final Map<String, dynamic> data = new Map<String, dynamic>();
+  data['type'] = landmark.type.toString().split('.')[1];
+  data['x'] = landmark.x;
+  data['y'] = landmark.y;
+  data['z'] = landmark.z;
+  data['likelihood'] = landmark.likelihood;
+  return json.encode(data);
 }

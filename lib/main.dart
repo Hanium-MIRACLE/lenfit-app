@@ -51,7 +51,7 @@ class _LenFitAppState extends State<LenFitApp> {
         initialRoute = "/sign-in";
         setState(() {});
       } else {
-        user = jsonDecode(value!);
+        user = jsonDecode(value);
         token = user['token'];
         LenFitApp.storage.write(key: 'token', value: token);
         initialRoute = "/";
@@ -77,7 +77,7 @@ class _LenFitAppState extends State<LenFitApp> {
         primaryColor: const Color(0xFF11009E),
       ),
       // home: const HomeScreen(),
-      initialRoute: '/',
+      initialRoute: '/sign-in',
       routes: {
         '/': (context) => const Navigation(),
         '/gallery': (context) => const GalleryScreen(),
