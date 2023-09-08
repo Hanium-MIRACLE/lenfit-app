@@ -79,13 +79,13 @@ class _LenFitAppState extends State<LenFitApp> {
       // home: const HomeScreen(),
       initialRoute: '/sign-in',
       routes: {
-        '/': (context) => const Navigation(),
+        '/index': (context) => const Navigation(),
         '/gallery': (context) => const GalleryScreen(),
         '/sign-up': (context) => const LoginScreen(screen: Screens.signUp),
         '/sign-in': (context) => const LoginScreen(screen: Screens.signIn),
         '/lens': (context) => const LensScreen(),
         '/records': (context) => const RecordScreen(),
-        '/setting': (conetxt) => const SettingScreen(),
+        '/setting': (context) => const SettingScreen(),
       },
     );
   }

@@ -45,7 +45,7 @@ class _LoginContentState extends State<LoginContent> {
             _isLoading = false;
           });
         } else {
-          Navigator.pushNamed(context, "/");
+          Navigator.popAndPushNamed(context, "/index");
         }
       });
     } else {
@@ -72,7 +72,7 @@ class _LoginContentState extends State<LoginContent> {
       // loginInfo.email = jsonDecode(userInfo)['email'];
       // loginInfo.password = jsonDecode(userInfo)['password'];
       // loginInfo.token = jsonDecode(userInfo)['token'];
-      Navigator.pushNamed(context, '/');
+      Navigator.popAndPushNamed(context, "/index");
     } else {
       print('로그인이 필요합니다');
     }

@@ -25,7 +25,7 @@ class BottomText extends StatelessWidget {
                     ),
                     GestureDetector(
                       onTap: () {
-                        Navigator.pushNamed(context, "/sign-in");
+                        Navigator.popAndPushNamed(context, "/sign-in");
                       },
                       child: const Text(
                         'Log In',
@@ -45,7 +45,7 @@ class BottomText extends StatelessWidget {
                     ),
                     GestureDetector(
                       onTap: () {
-                        Navigator.pushNamed(context, "/sign-up");
+                        Navigator.popAndPushNamed(context, "/sign-up");
                       },
                       child: const Text('Sign Up',
                           style: TextStyle(
