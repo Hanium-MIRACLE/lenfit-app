@@ -2,10 +2,6 @@ import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mlkit_pose_detection/google_mlkit_pose_detection.dart';
-import 'package:path_provider/path_provider.dart';
-
-import 'dart:convert';
-import 'dart:io';
 
 import 'detector_view.dart';
 import 'landmark_to_json.dart';
@@ -75,16 +71,15 @@ class _PoseDetectorViewState extends State<PoseDetectorView> {
           ];
         }
         Map<String, String> comments = feedback(landmarkJson, 'Squat');
-        for (var key in comments.keys) {
-          // print(landmarkJson[key]);
-          // print(comments[key]);
-        }
+        // for (var key in comments.keys) {
+        // print(landmarkJson[key]);
+        // print(comments[key]);
+        // }
         landmarksJson[count] = landmarkJson;
         landmarksJsonList.add(landmarksJson);
       }
       jsonString = PoseJson(pose: landmarksJson);
       print(landmarksJsonList.toString());
-      // saveToFile('test.json', jsonString.toString());
     }
     if (inputImage.metadata?.size != null &&
         inputImage.metadata?.rotation != null) {
@@ -97,21 +92,21 @@ class _PoseDetectorViewState extends State<PoseDetectorView> {
       _customPaint = CustomPaint(painter: painter);
     } else {
       _text = 'Poses found: ${poses.length}\n\n';
-      if (poses.isNotEmpty) {
-        // for (final pose in poses) {
-        //   for (final landmark in pose.landmarks.values) {
-        //     Landmarks(
-        //       name: "${landmark.type}".split('.')[1],
-        //       landmark: Landmark(
-        //         x: landmark.x,
-        //         y: landmark.y,
-        //         z: landmark.z,
-        //         v: landmark.likelihood,
-        //       ),
-        //     );
-        //   }
-        // }
-      }
+      // if (poses.isNotEmpty) {
+      // for (final pose in poses) {
+      //   for (final landmark in pose.landmarks.values) {
+      //     Landmarks(
+      //       name: "${landmark.type}".split('.')[1],
+      //       landmark: Landmark(
+      //         x: landmark.x,
+      //         y: landmark.y,
+      //         z: landmark.z,
+      //         v: landmark.likelihood,
+      //       ),
+      //     );
+      //   }
+      // }
+      // }
       // TODO: set _customPaint to draw landmarks on top of image
       _customPaint;
     }

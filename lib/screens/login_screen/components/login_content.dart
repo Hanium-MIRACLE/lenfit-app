@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:lenfit/main.dart';
 import 'package:lenfit/model/login.dart';
 import 'package:lenfit/model/user.dart';
 import 'package:lenfit/utils/colors.dart';

@@ -1,7 +1,5 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:camerawesome/camerawesome_plugin.dart';
-import 'package:camerawesome/pigeon.dart';
 
 class CameraScreen extends StatelessWidget {
   const CameraScreen({super.key, required this.cameraController});
