@@ -77,6 +77,7 @@ class _CameraViewState extends State<CameraView> {
     if (_controller == null) return Container();
     if (_controller?.value.isInitialized == false) return Container();
     return Container(
+      height: MediaQuery.of(context).size.height * 0.825,
       color: Colors.black,
       child: Stack(
         fit: StackFit.expand,

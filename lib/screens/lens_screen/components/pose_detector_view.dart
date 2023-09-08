@@ -2,12 +2,20 @@ import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mlkit_pose_detection/google_mlkit_pose_detection.dart';
+import 'package:path_provider/path_provider.dart';
+
+import 'dart:convert';
+import 'dart:io';
 
 import 'detector_view.dart';
 import 'landmark_to_json.dart';
 import 'pose_painter.dart';
+import 'params.dart';
+import 'feedback.dart';
 
 class PoseDetectorView extends StatefulWidget {
+  const PoseDetectorView({super.key});
+
   @override
   State<StatefulWidget> createState() => _PoseDetectorViewState();
 }
@@ -20,6 +28,8 @@ class _PoseDetectorViewState extends State<PoseDetectorView> {
   CustomPaint? _customPaint;
   String? _text;
   var _cameraLensDirection = CameraLensDirection.back;
+  static int count = 0;
+  static List<Map<int, dynamic>> landmarksJsonList = [];
 
   @override
   void dispose() async {
@@ -48,6 +58,34 @@ class _PoseDetectorViewState extends State<PoseDetectorView> {
       _text = '';
     });
     final poses = await _poseDetector.processImage(inputImage);
+    if (poses.isNotEmpty) {
+      count++;
+      Map<String, dynamic> landmarkJson = {};
+      Map<int, dynamic> landmarksJson = {};
+      late PoseJson? jsonString;
+      for (final pose in poses) {
+        for (final landmark in pose.landmarks.values) {
+          String? joint = landmark.type.toString().split('.')[1];
+          // mlkitDict[joint] = 1;
+          landmarkJson[mlkitToMediapipe[joint]!] = [
+            landmark.x,
+            landmark.y,
+            landmark.z,
+            landmark.likelihood
+          ];
+        }
+        Map<String, String> comments = feedback(landmarkJson, 'Squat');
+        for (var key in comments.keys) {
+          // print(landmarkJson[key]);
+          // print(comments[key]);
+        }
+        landmarksJson[count] = landmarkJson;
+        landmarksJsonList.add(landmarksJson);
+      }
+      jsonString = PoseJson(pose: landmarksJson);
+      print(landmarksJsonList.toString());
+      // saveToFile('test.json', jsonString.toString());
+    }
     if (inputImage.metadata?.size != null &&
         inputImage.metadata?.rotation != null) {
       final painter = PosePainter(
@@ -60,22 +98,22 @@ class _PoseDetectorViewState extends State<PoseDetectorView> {
     } else {
       _text = 'Poses found: ${poses.length}\n\n';
       if (poses.isNotEmpty) {
-        for (final pose in poses) {
-          for (final landmark in pose.landmarks.values) {
-            Landmarks(
-              name: "${landmark.type}".split('.')[1],
-              landmark: Landmark(
-                x: landmark.x,
-                y: landmark.y,
-                z: landmark.z,
-                v: landmark.likelihood,
-              ),
-            );
-          }
-        }
+        // for (final pose in poses) {
+        //   for (final landmark in pose.landmarks.values) {
+        //     Landmarks(
+        //       name: "${landmark.type}".split('.')[1],
+        //       landmark: Landmark(
+        //         x: landmark.x,
+        //         y: landmark.y,
+        //         z: landmark.z,
+        //         v: landmark.likelihood,
+        //       ),
+        //     );
+        //   }
+        // }
       }
       // TODO: set _customPaint to draw landmarks on top of image
-      _customPaint = null;
+      _customPaint;
     }
     _isBusy = false;
     if (mounted) {
