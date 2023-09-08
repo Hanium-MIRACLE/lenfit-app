@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:google_mlkit_commons/google_mlkit_commons.dart';
 
 class CameraView extends StatefulWidget {
-  CameraView(
+  const CameraView(
       {Key? key,
       required this.customPaint,
       required this.onImage,
@@ -38,6 +38,7 @@ class _CameraViewState extends State<CameraView> {
   double _maxAvailableExposureOffset = 0.0;
   double _currentExposureOffset = 0.0;
   bool _changingCameraLens = false;
+  bool isPaused = false;
 
   @override
   void initState() {
@@ -76,31 +77,69 @@ class _CameraViewState extends State<CameraView> {
     if (_cameras.isEmpty) return Container();
     if (_controller == null) return Container();
     if (_controller?.value.isInitialized == false) return Container();
+    final scale = 1 /
+        (_controller!.value.aspectRatio *
+            MediaQuery.of(context).size.aspectRatio);
     return Container(
-      height: MediaQuery.of(context).size.height * 0.825,
+      height: MediaQuery.of(context).size.height,
       color: Colors.black,
       child: Stack(
         fit: StackFit.expand,
         children: <Widget>[
           Center(
             child: _changingCameraLens
-                ? Center(
-                    child: const Text('Changing camera lens'),
+                ? const Center(
+                    child: Text('Changing camera lens'),
                   )
-                : CameraPreview(
-                    _controller!,
-                    child: widget.customPaint,
+                : Transform.scale(
+                    scale: scale,
+                    child: CameraPreview(
+                      _controller!,
+                      child: widget.customPaint,
+                    ),
                   ),
           ),
-          _backButton(),
           _switchLiveCameraToggle(),
-          _detectionViewModeToggle(),
           _zoomControl(),
-          _exposureControl(),
+          isPaused ? _stopButton() : _startButton(),
         ],
       ),
     );
   }
+
+  Widget _startButton() => Center(
+        child: SizedBox(
+            height: 100,
+            width: 100,
+            child: IconButton(
+              icon: const Icon(
+                Icons.not_started_rounded,
+              ),
+              onPressed: () => {
+                isPaused = true,
+                setState(() {}),
+              },
+              color: Colors.white,
+              iconSize: 100,
+            )),
+      );
+
+  Widget _stopButton() => Center(
+        child: SizedBox(
+            height: 100,
+            width: 100,
+            child: IconButton(
+              icon: const Icon(
+                Icons.motion_photos_paused_outlined,
+              ),
+              onPressed: () => {
+                isPaused = false,
+                setState(() {}),
+              },
+              color: Colors.white,
+              iconSize: 100,
+            )),
+      );
 
   Widget _backButton() => Positioned(
         top: 40,
@@ -112,7 +151,7 @@ class _CameraViewState extends State<CameraView> {
             heroTag: Object(),
             onPressed: () => Navigator.of(context).pop(),
             backgroundColor: Colors.black54,
-            child: Icon(
+            child: const Icon(
               Icons.arrow_back_ios_outlined,
               size: 20,
             ),
@@ -130,7 +169,7 @@ class _CameraViewState extends State<CameraView> {
             heroTag: Object(),
             onPressed: widget.onDetectorViewModeChanged,
             backgroundColor: Colors.black54,
-            child: Icon(
+            child: const Icon(
               Icons.photo_library_outlined,
               size: 25,
             ),
@@ -139,21 +178,20 @@ class _CameraViewState extends State<CameraView> {
       );
 
   Widget _switchLiveCameraToggle() => Positioned(
-        bottom: 8,
-        right: 8,
+        bottom: 20,
+        right: 12,
         child: SizedBox(
           height: 50.0,
           width: 50.0,
-          child: FloatingActionButton(
-            heroTag: Object(),
-            onPressed: _switchLiveCamera,
-            backgroundColor: Colors.black54,
-            child: Icon(
+          child: IconButton(
+            icon: Icon(
               Platform.isIOS
-                  ? Icons.flip_camera_ios_outlined
+                  ? Icons.flip_camera_ios_rounded
                   : Icons.flip_camera_android_outlined,
-              size: 25,
+              color: Colors.white,
             ),
+            onPressed: () => {},
+            iconSize: 30,
           ),
         ),
       );
@@ -185,22 +223,6 @@ class _CameraViewState extends State<CameraView> {
                     },
                   ),
                 ),
-                Container(
-                  width: 50,
-                  decoration: BoxDecoration(
-                    color: Colors.black54,
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Center(
-                      child: Text(
-                        '${_currentZoomLevel.toStringAsFixed(1)}x',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ),
-                ),
               ],
             ),
           ),
@@ -211,7 +233,7 @@ class _CameraViewState extends State<CameraView> {
         top: 40,
         right: 8,
         child: ConstrainedBox(
-          constraints: BoxConstraints(
+          constraints: const BoxConstraints(
             maxHeight: 250,
           ),
           child: Column(children: [
